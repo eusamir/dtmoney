@@ -1,11 +1,26 @@
-import { useEffect } from "react"
-import { api } from "../../services/api";
+import {  useState, useEffect } from "react"
 import { Container } from "./styles"
+import {api} from "../../services/api"
+
+
+
+interface Transaction{
+  id: number;
+  title: string;
+  amount: number;
+  type: string;
+  category: string;
+  createdAt: string;
+}
+
+
 export function Transaction(){
-  useEffect(() =>{
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  useEffect(() => {
     api.get('transactions')
-    .then(response => console.log(response.data))
-  },[]);
+      .then((response:any) => setTransactions(response.data.transactions))
+      .catch(error => console.error(error));
+    }, []);
   return(
     <Container>
       <table>
@@ -18,30 +33,17 @@ export function Transaction(){
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="title">Desenvolvimento de site</td>
-            <td className='income'>R$12.0000,00</td>
-            <td>Venda</td>
-            <td>12/09/2021</td>
+        {transactions.map(transaction => (
+            <tr key={transaction.id}>
+            <td className='title'>{transaction.title}</td>
+            <td className={transaction.type}>{new Intl.NumberFormat('pt-BR',{
+              style:'currency',
+              currency:'BRL'
+            }).format(transaction.amount)}</td>
+            <td>{transaction.category}</td>
+            <td>{new Intl.DateTimeFormat('pt-BR').format(new Date(transaction.createdAt))}</td>
           </tr>
-          <tr>
-            <td className="title">Hamburguer</td>
-            <td className='outcome'>-R$59,00</td>
-            <td>Compra</td>
-            <td>22/09/2021</td>
-          </tr>
-          <tr>
-            <td className="title">Aluguel</td>
-            <td className='outcome'>-R$1.3000,00</td>
-            <td>Casa</td>
-            <td>20/10/2021</td>
-          </tr>
-          <tr>
-            <td className="title">Computador</td>
-            <td className='income'>R$5.0000,00</td>
-            <td>Venda</td>
-            <td>15/12/2021</td>
-          </tr>
+        ))}
         </tbody>
       </table>
     </Container>

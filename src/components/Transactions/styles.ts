@@ -22,10 +22,10 @@ export const Container = styled.div`
   td.title{
     color: black;
   }
-  td.income{
+  td.deposit{
     color: var(--green);
   }
-  td.outcome{
+  td.withdraw{
     color: var(--red);
   }
 `;
