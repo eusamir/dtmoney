@@ -64,7 +64,7 @@ export const RadioBox = styled.button<RadioBoxprops>`
   align-items: center;
   justify-content: center;
   transition: filter 0.2s;
-  background: ${(props)=>props.isActive ? transparentize(0.9, colors[props.activeColor]):'transparent'};
+  background: ${(props)=>props.isActive ? transparentize(0.9, colors[props.activeColor]):''};
 
   &:hover{ 
     border-color: ${darken(0.1, '#d7d7d7')};

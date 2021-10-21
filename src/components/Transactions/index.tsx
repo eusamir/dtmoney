@@ -1,7 +1,7 @@
 import {  useState, useEffect } from "react"
 import { Container } from "./styles"
 import {api} from "../../services/api"
-
+import {AxiosResponse} from 'axios'
 
 
 interface Transaction{
@@ -18,7 +18,7 @@ export function Transaction(){
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   useEffect(() => {
     api.get('transactions')
-      .then((response:any) => setTransactions(response.data.transactions))
+      .then((response:any)=> setTransactions(response.data.transactions))
       .catch(error => console.error(error));
     }, []);
   return(

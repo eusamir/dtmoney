@@ -48,7 +48,7 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
         <input
           placeholder='Título'
           value={title}
-          onChange={event =>setTitle(event.target.value)}
+          onChange={event =>setTitle(event.target.value)} 
         />
         <input
           type='Number'
