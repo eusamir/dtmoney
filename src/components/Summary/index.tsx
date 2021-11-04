@@ -3,10 +3,10 @@ import income from '../../assets/income.svg'
 import expense from '../../assets/outcome.svg'
 import total from '../../assets/total.svg'
 import { useContext } from 'react'
-import { TransactionsContext } from '../../TransacionsContext'
+import { useTransactions } from "../../hooks/useTransactions";
 
 export function Summary() {
-  const {transactions} = useContext(TransactionsContext)
+  const {transactions} = useTransactions()
   console.log(transactions)
 
   const summary= transactions.reduce((acc,transaction)=>{
