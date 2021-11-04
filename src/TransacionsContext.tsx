@@ -1,9 +1,7 @@
-import {createContext, useState, useEffect, ReactNode} from 'react'
-import {api} from './services/api'
+import { createContext, useState, useEffect, ReactNode } from "react";
+import { api } from "./services/api";
 
-export const TransactionsContext= createContext<TransactionsContextData>({} as TransactionsContextData);
-
-interface Transaction{
+interface Transaction {
   id: number;
   title: string;
   amount: number;
@@ -11,29 +9,54 @@ interface Transaction{
   category: string;
   createdAt: string;
 }
-interface TransactionsProviderProps{
+interface TransactionsProviderProps {
   children: ReactNode;
 }
-interface TransactionsContextData{
+interface TransactionsContextData {
   transactions: Transaction[];
-  createTransaction:(transaction: TransactionInput) => void
+  createTransaction: (transaction: TransactionInput) => Promise<void>;
 }
-type TransactionInput = Omit<Transaction, 'id'| 'createdAt'>
-export function TransactionsProvider({children}: TransactionsProviderProps){
+
+export const TransactionsContext = createContext<TransactionsContextData>(
+  {} as TransactionsContextData
+);
+
+type ApiResponse = { transactions: Transaction[] };
+
+type TransactionInput = Omit<Transaction, "id" | "createdAt">;
+
+export function TransactionsProvider({ children }: TransactionsProviderProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   useEffect(() => {
-    api.get('transactions')
-      .then((response:any)=> setTransactions(response.data.transactions))
-      .catch(error => console.error(error));
-    }, []);
+    const fetch = async () => {
+      try {
+        const { data } = await api.get<ApiResponse>("transactions");
+        setTransactions(data.transactions);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetch();
+  }, []);
 
-  function createTransaction(transaction:TransactionInput){
-    api.post('/transactions', transaction)
+  //outra forma de ultilizar é com .then
+  //api('transactions')
+  //.then(response => setTransactions(response.data.transactions))
+  //}, [])
+
+  async function createTransaction(transactionInput: TransactionInput) {
+    const response = await api.post("/transactions", {
+      ...transactionInput,
+      createdAt: new Date(),
+    });
+    const { transaction } = response.data;
+
+    setTransactions([...transactions, transaction]);
   }
 
-  return(
-    <TransactionsContext.Provider value={{transactions, createTransaction}}>
+  return (
+    <TransactionsContext.Provider value={{ transactions, createTransaction }}>
       {children}
     </TransactionsContext.Provider>
   );
-};
+}
